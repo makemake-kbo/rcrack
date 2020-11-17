@@ -6,8 +6,6 @@ import sys
 import getopt
 from itertools import chain, product
 
-ip_input = "94.130.143.254:27165"
-
 ip = "127.0.0.1"
 port= "20175"
 
@@ -59,16 +57,12 @@ def arg_parsing(argv):
         if opt == '-i':
             try:
                 ip_port_parse(arg)
-            except:
-                print("Can't parse server address!")
+            except Exception as e:
+                print("Can't parse server address,", e)
                 sys.exit(1)
-
-
-
 
 
 if __name__ == '__main__':
 
     arg_parsing(sys.argv[1:])
     bruteforce()
-
