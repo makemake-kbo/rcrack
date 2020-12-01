@@ -7,8 +7,10 @@ import getopt
 from itertools import chain, product
 
 ip = "127.0.0.1"
-port= "20175"
+port = "20175"
 
+chars = "string.ascii_lowercase"
+lenght = 4
 
 def ip_port_parse(ip_input):
     global ip
@@ -51,7 +53,8 @@ def bruteforce(chars=string.ascii_lowercase, lenght=4):
 
 
 def arg_parsing(argv):
-    opts, args = getopt.getopt(argv, "i:")
+    global chars, lenght
+    opts, args = getopt.getopt(argv, "i:c:l:")
     for opt, arg in opts:
 
         if opt == '-i':
@@ -61,6 +64,11 @@ def arg_parsing(argv):
                 print("Can't parse server address,", e)
                 sys.exit(1)
 
+        elif opt == '-c':
+            chars = arg
+       
+        elif opt == '-l':
+            lenght = arg
 
 if __name__ == '__main__':
 
